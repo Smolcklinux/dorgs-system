@@ -1,12 +1,12 @@
 // ============================================
-// AUTH.JS - Autenticação com usuário/senha (FINALMENTE CORRETO!)
+// AUTH.JS - Autenticação com usuário/senha (VERSÃO FINAL)
 // ============================================
 
 import { supabase } from './supabase-config.js';
 
 let currentUser = null;
 
-// Login com nome de usuário
+// Login com nome de usuário (APENAS USERNAME + SENHA)
 export async function signInWithUsername(username, password) {
   try {
     console.log('🔍 Buscando usuário:', username);
@@ -15,7 +15,7 @@ export async function signInWithUsername(username, password) {
     const { data: perfil, error: perfilError } = await supabase
       .from('perfis')
       .select('id')
-      .eq('username', username)
+      .eq('username', username.toLowerCase())
       .maybeSingle();
     
     if (perfilError || !perfil) {
@@ -25,36 +25,14 @@ export async function signInWithUsername(username, password) {
     
     console.log('✅ Perfil encontrado, ID:', perfil.id);
     
-    // CORRIGIDO: usar 'users' em vez de 'auth.users'
-    const { data: userData, error: userError } = await supabase
-      .from('users')
-      .select('email')
-      .eq('id', perfil.id)
-      .maybeSingle();
+    // 🔥 CORREÇÃO 1: Usar email interno direto (mais simples)
+    const emailInterno = `${username.toLowerCase()}@dorgs.local`;
     
-    if (userError || !userData) {
-      console.log('⚠️ Erro ao buscar email, usando fallback');
-      // Fallback: tenta login com email temporário
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: `${username}@dorgs.temp`,
-        password: password
-      });
-      
-      if (error) {
-        console.log('❌ Fallback falhou:', error);
-        throw new Error('Usuário ou senha incorretos');
-      }
-      
-      console.log('✅ Login via fallback bem-sucedido');
-      currentUser = data.user;
-      return currentUser;
-    }
+    console.log('📧 Tentando login com email:', emailInterno);
     
-    console.log('📧 Email encontrado:', userData.email);
-    
-    // Login com o email real
+    // Login com email interno
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: userData.email,
+      email: emailInterno,
       password: password
     });
     
@@ -73,29 +51,34 @@ export async function signInWithUsername(username, password) {
   }
 }
 
-// Cadastro com username
-export async function signUpWithUsername(username, email, password) {
+// Cadastro com username (APENAS USERNAME + SENHA, SEM EMAIL)
+export async function signUpWithUsername(username, password) {
   try {
     console.log('📝 Criando usuário:', username);
     
+    const usernameLower = username.toLowerCase().trim();
+    
     // Verifica se username já existe
-    const { data: existing } = await supabase
+    const { data: existing, error: checkError } = await supabase
       .from('perfis')
       .select('username')
-      .eq('username', username)
+      .eq('username', usernameLower)
       .maybeSingle();
     
     if (existing) {
       throw new Error('Nome de usuário já está em uso');
     }
     
-    // Cria usuário no auth com email REAL
+    // 🔥 CORREÇÃO 2: Criar email interno automaticamente
+    const emailInterno = `${usernameLower}@dorgs.local`;
+    
+    // Cria usuário no auth com email interno
     const { data, error } = await supabase.auth.signUp({
-      email: email,
+      email: emailInterno,
       password: password,
       options: {
         data: {
-          username: username
+          username: usernameLower
         }
       }
     });
@@ -104,23 +87,22 @@ export async function signUpWithUsername(username, email, password) {
     
     console.log('✅ Usuário criado no auth, ID:', data.user.id);
     
-    // Aguarda e força criação do perfil
-    setTimeout(async () => {
-      const { error: perfilError } = await supabase
-        .from('perfis')
-        .upsert({
-          id: data.user.id,
-          username: username,
-          bio: 'Novo por aqui! 🚀'
-        });
-      
-      if (perfilError) {
-        console.error('Erro ao criar perfil:', perfilError);
-      } else {
-        console.log('✅ Perfil criado com sucesso!');
-      }
-    }, 1000);
+    // Criar perfil imediatamente (sem esperar trigger)
+    const { error: perfilError } = await supabase
+      .from('perfis')
+      .insert({
+        id: data.user.id,
+        username: usernameLower,
+        nome_publico: usernameLower,
+        bio: 'Novo por aqui! 🚀'
+      });
     
+    if (perfilError) {
+      console.error('Erro ao criar perfil:', perfilError);
+      throw new Error('Erro ao criar perfil');
+    }
+    
+    console.log('✅ Perfil criado com sucesso!');
     return data;
     
   } catch (error) {
@@ -138,6 +120,21 @@ export async function getCurrentUser() {
   }
   currentUser = user;
   return currentUser;
+}
+
+// Buscar dados do perfil do usuário atual
+export async function getCurrentProfile() {
+  const user = await getCurrentUser();
+  if (!user) return null;
+  
+  const { data: perfil, error } = await supabase
+    .from('perfis')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+  
+  if (error) return null;
+  return perfil;
 }
 
 // Logout

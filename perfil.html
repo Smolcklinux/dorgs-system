@@ -13,346 +13,400 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1rem;
         }
 
         .navbar {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0.8rem 2rem;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            max-width: 1200px;
+            margin: 0 auto 2rem auto;
+            border-radius: 1rem;
         }
 
         .logo h2 {
-            font-size: 1.8rem;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 800;
         }
 
         .nav-links {
             display: flex;
-            gap: 1.5rem;
-            align-items: center;
+            gap: 1rem;
         }
 
-        .nav-link {
+        .nav-links a {
             text-decoration: none;
-            color: #555;
-            font-weight: 500;
+            color: #666;
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
-            transition: all 0.3s;
         }
 
-        .nav-link:hover {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-        }
-
-        .nav-link.active {
+        .nav-links a.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
         .logout-btn {
-            background: linear-gradient(135deg, #ff4757 0%, #c0392b 100%);
+            background: #ff4757;
             color: white;
             border: none;
-            padding: 0.5rem 1.2rem;
+            padding: 0.5rem 1rem;
             border-radius: 0.5rem;
             cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .logout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
         }
 
         .profile-container {
-            max-width: 900px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            color: white;
-            text-decoration: none;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 0.5rem 1rem;
-            border-radius: 2rem;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-        }
-
-        .back-link:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateX(-5px);
-        }
-
-        .profile-header {
+        .profile-card {
             background: white;
             border-radius: 1.5rem;
             padding: 2rem;
-            text-align: center;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
+        .avatar {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .avatar-circle {
+            width: 100px;
+            height: 100px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 0 auto;
             font-size: 3rem;
-            margin: 0 auto 1rem;
-            border: 4px solid white;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
             color: white;
         }
 
-        .profile-header h2 {
-            font-size: 1.8rem;
+        h2 {
+            text-align: center;
+            margin-bottom: 0.5rem;
             color: #1a1a2e;
-            margin-bottom: 0.25rem;
         }
 
-        .profile-header p {
+        .username {
+            text-align: center;
             color: #667eea;
-            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
             margin-bottom: 1.5rem;
         }
 
-        .profile-stats {
-            display: flex;
-            justify-content: center;
-            gap: 2.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .stat-box {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: #666;
-            margin-top: 0.25rem;
-        }
-
-        .posts-title {
-            margin-bottom: 1rem;
-        }
-
-        .posts-title h3 {
-            color: white;
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .post-card {
-            background: white;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
-        }
-
-        .post-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .post-content {
-            margin-bottom: 1rem;
-            line-height: 1.6;
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
             color: #333;
-        }
-
-        .post-stats {
-            display: flex;
-            gap: 1.5rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid #e8e8e8;
-            color: #666;
+            font-weight: 500;
             font-size: 0.85rem;
         }
 
-        .empty-posts {
-            text-align: center;
-            padding: 3rem;
-            background: white;
-            border-radius: 1rem;
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input, .input-wrapper textarea {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .input-wrapper input:focus, .input-wrapper textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        .input-wrapper textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 1.2rem;
             color: #999;
+            background: none;
+            border: none;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            color: #1a1a2e;
+            margin: 1.5rem 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            text-align: center;
         }
 
         @media (max-width: 768px) {
-            .nav-container {
+            .navbar {
                 flex-direction: column;
-                gap: 0.5rem;
-                padding: 0.8rem 1rem;
+                gap: 1rem;
             }
-            .nav-links {
-                width: 100%;
-                justify-content: center;
-            }
-            .profile-header {
+            .profile-card {
                 padding: 1.5rem;
-            }
-            .profile-stats {
-                gap: 1.5rem;
-            }
-            .stat-number {
-                font-size: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <nav class="navbar">
-            <div class="nav-container">
-                <div class="logo">
-                    <h2>🐶 Dorgs</h2>
-                </div>
-                <div class="nav-links">
-                    <a href="index.html" class="nav-link">🏠 Início</a>
-                    <a href="perfil.html" class="nav-link active">👤 Perfil</a>
-                    <button id="logoutBtn" class="logout-btn">🚪 Sair</button>
-                </div>
+    <nav class="navbar">
+        <div class="logo">
+            <h2>🐶 Dorgs</h2>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">🏠 Início</a>
+            <a href="perfil.html" class="active">👤 Perfil</a>
+            <button id="logoutBtn" class="logout-btn">🚪 Sair</button>
+        </div>
+    </nav>
+
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="avatar">
+                <div class="avatar-circle" id="avatarPreview">👤</div>
             </div>
-        </nav>
-        
-        <div class="profile-container">
-            <a href="index.html" class="back-link">
-                ← Voltar para o feed
-            </a>
-            
-            <div class="profile-header">
-                <div class="profile-avatar" id="profileAvatar">👤</div>
-                <h2 id="profileName">Carregando...</h2>
-                <p id="profileBio"></p>
-                <div class="profile-stats">
-                    <div class="stat-box">
-                        <div class="stat-number" id="profilePostsCount">0</div>
-                        <div class="stat-label">Posts</div>
+
+            <h2 id="nomePublicoDisplay">Carregando...</h2>
+            <p class="username" id="usernameDisplay">@carregando</p>
+
+            <div id="messageArea"></div>
+
+            <form id="profileForm">
+                <div class="input-group">
+                    <label>📛 Nome público</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="nomePublico" placeholder="Como você quer ser chamado">
                     </div>
                 </div>
-            </div>
-            
-            <div class="posts-title">
-                <h3>📝 Meus Posts</h3>
-            </div>
-            <div id="userPosts">
-                <div class="loading-spinner" style="color:white; text-align:center;">Carregando...</div>
-            </div>
+
+                <div class="input-group">
+                    <label>📝 Sobre você</label>
+                    <div class="input-wrapper">
+                        <textarea id="bio" placeholder="Conte um pouco sobre você..."></textarea>
+                    </div>
+                </div>
+
+                <div class="section-title">🔐 Segurança</div>
+
+                <div class="input-group">
+                    <label>🔒 Nova senha</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="novaSenha" placeholder="Deixe em branco para manter a atual">
+                        <button type="button" class="toggle-password" id="toggleNovaSenha">👁️</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>✓ Confirmar nova senha</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="confirmarSenha" placeholder="Digite a nova senha novamente">
+                        <button type="button" class="toggle-password" id="toggleConfirmarSenha">👁️</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="save-btn" id="saveBtn">Salvar alterações</button>
+            </form>
         </div>
     </div>
 
     <script type="module">
         import { supabase } from './supabase-config.js';
-        import { getCurrentUser, logout } from './auth.js';
 
-        async function loadProfile() {
-            const user = await getCurrentUser();
+        let userId = null;
+
+        async function loadUser() {
+            const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
                 window.location.href = 'login.html';
                 return;
             }
-
+            userId = user.id;
+            
+            // Carregar dados do perfil
             const { data: perfil } = await supabase
                 .from('perfis')
-                .select('*')
-                .eq('id', user.id)
+                .select('username, nome_publico, bio')
+                .eq('id', userId)
                 .single();
-
-            const nome = perfil?.username || user.email.split('@')[0];
-            const bio = perfil?.bio || 'Olá! Estou usando o Dorgs 🚀';
-            const inicial = nome.charAt(0).toUpperCase();
-
-            document.getElementById('profileAvatar').textContent = inicial;
-            document.getElementById('profileName').textContent = nome;
-            document.getElementById('profileBio').textContent = bio;
-
-            const { data: posts, count } = await supabase
-                .from('posts')
-                .select('*', { count: 'exact' })
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false });
-
-            document.getElementById('profilePostsCount').textContent = count || 0;
-
-            const container = document.getElementById('userPosts');
             
-            if (!posts || posts.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-posts">
-                        📝 Você ainda não fez nenhum post<br>
-                        <a href="index.html" style="color: #667eea;">Voltar ao feed e publicar algo</a>
-                    </div>
-                `;
-                return;
+            if (perfil) {
+                const nomeExibicao = perfil.nome_publico || perfil.username;
+                document.getElementById('nomePublicoDisplay').textContent = nomeExibicao;
+                document.getElementById('usernameDisplay').textContent = `@${perfil.username}`;
+                document.getElementById('nomePublico').value = perfil.nome_publico || '';
+                document.getElementById('bio').value = perfil.bio || '';
+                
+                const inicial = nomeExibicao.charAt(0).toUpperCase();
+                document.getElementById('avatarPreview').textContent = inicial;
             }
-
-            container.innerHTML = posts.map(post => `
-                <div class="post-card">
-                    <div class="post-content">
-                        <p>${escapeHtml(post.conteudo)}</p>
-                    </div>
-                    <div class="post-stats">
-                        <span>❤️ ${post.curtidas || 0} curtidas</span>
-                        <span>📅 ${new Date(post.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
-                    </div>
-                </div>
-            `).join('');
         }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+        loadUser();
 
+        // Toggle para mostrar senha
+        const toggleNovaSenha = document.getElementById('toggleNovaSenha');
+        const toggleConfirmarSenha = document.getElementById('toggleConfirmarSenha');
+        const novaSenhaInput = document.getElementById('novaSenha');
+        const confirmarSenhaInput = document.getElementById('confirmarSenha');
+
+        toggleNovaSenha.addEventListener('click', () => {
+            const type = novaSenhaInput.type === 'password' ? 'text' : 'password';
+            novaSenhaInput.type = type;
+            toggleNovaSenha.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+
+        toggleConfirmarSenha.addEventListener('click', () => {
+            const type = confirmarSenhaInput.type === 'password' ? 'text' : 'password';
+            confirmarSenhaInput.type = type;
+            toggleConfirmarSenha.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+
+        // Logout
         document.getElementById('logoutBtn').addEventListener('click', async () => {
-            await logout();
+            await supabase.auth.signOut();
             window.location.href = 'login.html';
         });
 
-        loadProfile();
+        // Salvar perfil e trocar senha
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const nomePublico = document.getElementById('nomePublico').value.trim();
+            const bio = document.getElementById('bio').value.trim();
+            const novaSenha = document.getElementById('novaSenha').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+            const btn = document.getElementById('saveBtn');
+            const messageArea = document.getElementById('messageArea');
+            
+            messageArea.innerHTML = '';
+            btn.disabled = true;
+            btn.textContent = 'Salvando...';
+            
+            try {
+                // 1. Atualizar perfil
+                const updateData = {};
+                if (nomePublico) updateData.nome_publico = nomePublico;
+                if (bio) updateData.bio = bio;
+                
+                if (Object.keys(updateData).length > 0) {
+                    const { error } = await supabase
+                        .from('perfis')
+                        .update(updateData)
+                        .eq('id', userId);
+                    
+                    if (error) throw new Error('Erro ao atualizar perfil');
+                }
+                
+                // 2. Trocar senha se fornecida
+                if (novaSenha || confirmarSenha) {
+                    if (novaSenha !== confirmarSenha) {
+                        throw new Error('As novas senhas não coincidem');
+                    }
+                    if (novaSenha.length < 6) {
+                        throw new Error('A senha deve ter pelo menos 6 caracteres');
+                    }
+                    
+                    const { error } = await supabase.auth.updateUser({
+                        password: novaSenha
+                    });
+                    
+                    if (error) throw new Error('Erro ao alterar senha: ' + error.message);
+                    
+                    // Limpar campos de senha
+                    document.getElementById('novaSenha').value = '';
+                    document.getElementById('confirmarSenha').value = '';
+                }
+                
+                showMessage('✅ Perfil atualizado com sucesso!', 'success');
+                
+                // Recarregar dados
+                await loadUser();
+                
+            } catch (error) {
+                showMessage(error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Salvar alterações';
+            }
+        });
+        
+        function showMessage(msg, type) {
+            const div = document.createElement('div');
+            div.className = type === 'error' ? 'error-message' : 'success-message';
+            div.textContent = msg;
+            document.getElementById('messageArea').innerHTML = '';
+            document.getElementById('messageArea').appendChild(div);
+            
+            setTimeout(() => {
+                if (document.getElementById('messageArea').firstChild === div) {
+                    div.remove();
+                }
+            }, 3000);
+        }
     </script>
 </body>
 </html>

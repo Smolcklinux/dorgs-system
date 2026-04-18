@@ -6,297 +6,67 @@
     <title>Login - Dorgs</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        /* Elementos decorativos */
-        body::before {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            top: -100px;
-            right: -100px;
-        }
-
-        body::after {
-            content: '';
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            bottom: -200px;
-            left: -200px;
-        }
-
-        .container {
-            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1.5rem;
-            position: relative;
-            z-index: 1;
+            padding: 1rem;
         }
-
-        .login-wrapper {
-            display: flex;
-            max-width: 1100px;
-            width: 100%;
+        .login-card {
             background: white;
             border-radius: 2rem;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            animation: fadeInUp 0.6s ease-out;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: fadeIn 0.5s ease-out;
         }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Lado esquerdo - Banner */
-        .banner {
-            flex: 1;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 3rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .banner::before {
-            content: '🐶';
-            position: absolute;
-            font-size: 20rem;
-            opacity: 0.1;
-            bottom: -50px;
-            right: -50px;
-        }
-
-        .banner h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            font-weight: 800;
-            position: relative;
-        }
-
-        .banner p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-            position: relative;
-        }
-
-        .features {
-            position: relative;
-            margin-top: 2rem;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-            font-size: 0.95rem;
-        }
-
-        .feature-item span:first-child {
-            font-size: 1.2rem;
-        }
-
-        /* Lado direito - Formulário */
-        .form-side {
-            flex: 1;
-            padding: 3rem;
-            background: white;
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-
-        .logo h2 {
-            font-size: 1.8rem;
+        .logo { text-align: center; margin-bottom: 2rem; }
+        .logo h1 {
+            font-size: 2.5rem;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
-
-        /* ============================================ */
-        /* INDICADOR DE STATUS DO SERVIDOR - NEON */
-        /* ============================================ */
-        .server-status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            padding: 0.5rem;
-            border-radius: 2rem;
-            background: rgba(0, 0, 0, 0.03);
-        }
-
-        .status-led {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .status-led.online {
-            background: #00ff88;
-            box-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88;
-            animation: pulse-green 1.5s infinite;
-        }
-
-        .status-led.offline {
-            background: #ff4444;
-            box-shadow: 0 0 10px #ff4444, 0 0 20px #ff4444;
-            animation: pulse-red 1.5s infinite;
-        }
-
-        .status-led.checking {
-            background: #ffaa00;
-            box-shadow: 0 0 10px #ffaa00;
-            animation: pulse-yellow 1s infinite;
-        }
-
-        @keyframes pulse-green {
-            0% {
-                box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(0, 255, 136, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(0, 255, 136, 0);
-            }
-        }
-
-        @keyframes pulse-red {
-            0% {
-                box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(255, 68, 68, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
-            }
-        }
-
-        @keyframes pulse-yellow {
-            0% {
-                box-shadow: 0 0 0 0 rgba(255, 170, 0, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(255, 170, 0, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(255, 170, 0, 0);
-            }
-        }
-
-        .status-text {
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .status-text.online {
-            color: #00ff88;
-            text-shadow: 0 0 5px #00ff88;
-        }
-
-        .status-text.offline {
-            color: #ff4444;
-            text-shadow: 0 0 5px #ff4444;
-        }
-
-        .status-text.checking {
-            color: #ffaa00;
-        }
-        /* ============================================ */
-
-        .form-side h3 {
-            font-size: 1.8rem;
-            color: #1a1a2e;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-        }
-
-        .form-side .subtitle {
-            color: #666;
-            margin-bottom: 2rem;
-            font-size: 0.9rem;
-        }
-
-        .input-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #333;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper .icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.1rem;
-        }
-
+        .logo p { color: #666; font-size: 0.85rem; margin-top: 0.25rem; }
+        h2 { text-align: center; margin-bottom: 0.5rem; color: #1a1a2e; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 2rem; font-size: 0.85rem; }
+        .input-group { margin-bottom: 1.5rem; }
+        .input-group label { display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-size: 0.85rem; }
+        .input-wrapper { position: relative; }
         .input-wrapper input {
             width: 100%;
-            padding: 0.9rem 1rem 0.9rem 2.8rem;
-            border: 2px solid #e8e8e8;
+            padding: 0.9rem 1rem;
+            border: 2px solid #e0e0e0;
             border-radius: 0.75rem;
             font-size: 1rem;
             transition: all 0.3s;
-            font-family: inherit;
+            padding-right: 3rem;
         }
-
         .input-wrapper input:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
         }
-
+        .toggle-password {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #999;
+            background: none;
+            border: none;
+        }
         .login-btn {
             width: 100%;
             padding: 0.9rem;
@@ -310,205 +80,98 @@
             transition: all 0.3s;
             margin-top: 0.5rem;
         }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .login-btn:disabled {
-            opacity: 0.7;
-            transform: none;
-        }
-
-        .register-link {
-            text-align: center;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e8e8e8;
-        }
-
-        .register-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s;
-        }
-
-        .register-link a:hover {
-            color: #764ba2;
-        }
-
-        .error-message {
-            background: #fee;
-            color: #c33;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-            font-size: 0.875rem;
-            text-align: center;
-            animation: shake 0.3s ease-out;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        .success-message {
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-            font-size: 0.875rem;
-            text-align: center;
-        }
-
-        /* Responsivo */
-        @media (max-width: 768px) {
-            .login-wrapper {
-                flex-direction: column;
-                border-radius: 1.5rem;
-            }
-            
-            .banner {
-                padding: 2rem;
-                text-align: center;
-            }
-            
-            .banner h1 {
-                font-size: 2rem;
-            }
-            
-            .features {
-                display: none;
-            }
-            
-            .form-side {
-                padding: 2rem;
-            }
-        }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+        .register-link { text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e0e0e0; }
+        .register-link a { color: #667eea; text-decoration: none; font-weight: 600; }
+        .error-message { background: #fee; color: #c33; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.8rem; text-align: center; }
+        .success-message { background: #e8f5e9; color: #2e7d32; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.8rem; text-align: center; }
+        .server-status { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .status-led { width: 10px; height: 10px; border-radius: 50%; }
+        .status-led.online { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
+        .status-led.offline { background: #ff4444; box-shadow: 0 0 10px #ff4444; }
+        .status-text.online { color: #00ff88; font-size: 0.75rem; }
+        .status-text.offline { color: #ff4444; font-size: 0.75rem; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="login-wrapper">
-            <!-- Lado esquerdo - Banner -->
-            <div class="banner">
-                <h1>🐶 Dorgs</h1>
-                <p>Conecte-se com amigos, compartilhe momentos e faça parte da nossa comunidade</p>
-                <div class="features">
-                    <div class="feature-item">
-                        <span>🚀</span>
-                        <span>Compartilhe suas ideias</span>
-                    </div>
-                    <div class="feature-item">
-                        <span>❤️</span>
-                        <span>Curta posts interessantes</span>
-                    </div>
-                    <div class="feature-item">
-                        <span>💬</span>
-                        <span>Conecte-se com pessoas</span>
-                    </div>
+    <div class="login-card">
+        <div class="logo">
+            <h1>🐶 Dorgs</h1>
+            <p>rede social dos devs</p>
+        </div>
+
+        <div class="server-status" id="serverStatus">
+            <div class="status-led" id="statusLed"></div>
+            <span class="status-text" id="statusText">Verificando...</span>
+        </div>
+
+        <h2>Bem-vindo de volta!</h2>
+        <p class="subtitle">Faça login com seu usuário</p>
+
+        <div id="messageArea"></div>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <label>👤 Nome de usuário</label>
+                <div class="input-wrapper">
+                    <input type="text" id="username" placeholder="ex: joaosilva" required autocomplete="off">
                 </div>
             </div>
 
-            <!-- Lado direito - Formulário -->
-            <div class="form-side">
-                <div class="logo">
-                    <h2>✨ Dorgs ✨</h2>
-                </div>
-
-                <!-- INDICADOR DE STATUS DO SERVIDOR -->
-                <div class="server-status" id="serverStatus">
-                    <div class="status-led checking" id="statusLed"></div>
-                    <span class="status-text checking" id="statusText">Verificando conexão...</span>
-                </div>
-
-                <h3>Bem-vindo de volta!</h3>
-                <p class="subtitle">Faça login para continuar</p>
-
-                <div id="messageArea"></div>
-
-                <form id="loginForm">
-                    <div class="input-group">
-                        <label>👤 Nome de usuário</label>
-                        <div class="input-wrapper">
-                            <span class="icon">@</span>
-                            <input type="text" id="username" placeholder="seu_usuario" required>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>🔒 Senha</label>
-                        <div class="input-wrapper">
-                            <span class="icon">🔐</span>
-                            <input type="password" id="password" placeholder="••••••••" required>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="login-btn" id="loginBtn">
-                        <span>Entrar</span>
-                    </button>
-                </form>
-
-                <div class="register-link">
-                    <p>Não tem uma conta? <a href="cadastro.html">Criar conta gratuita →</a></p>
+            <div class="input-group">
+                <label>🔒 Senha</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" placeholder="••••••••" required>
+                    <button type="button" class="toggle-password" id="togglePassword">👁️</button>
                 </div>
             </div>
+
+            <button type="submit" class="login-btn" id="loginBtn">Entrar</button>
+        </form>
+
+        <div class="register-link">
+            <p>Não tem uma conta? <a href="cadastro.html">Criar conta →</a></p>
         </div>
     </div>
 
     <script type="module">
         import { supabase } from './supabase-config.js';
         import { signInWithUsername } from './auth.js';
-        
-        // ============================================
-        // INDICADOR DE STATUS DO SERVIDOR
-        // ============================================
-        async function checkServerStatus() {
+
+        // Status do servidor
+        async function checkStatus() {
             const led = document.getElementById('statusLed');
             const text = document.getElementById('statusText');
-            
             try {
-                // Tenta fazer uma consulta simples ao Supabase
-                const { error } = await supabase
-                    .from('perfis')
-                    .select('count', { count: 'exact', head: true });
-                
+                const { error } = await supabase.from('perfis').select('count', { count: 'exact', head: true });
                 if (!error) {
-                    // CONECTADO - Neon Verde
                     led.className = 'status-led online';
                     text.className = 'status-text online';
-                    text.innerHTML = '● Servidor ONLINE';
-                    console.log('✅ Servidor Supabase conectado!');
-                } else {
-                    throw new Error('Erro na consulta');
-                }
-            } catch (error) {
-                // DESCONECTADO - Neon Vermelho
+                    text.textContent = '● Servidor ONLINE';
+                } else { throw new Error(); }
+            } catch {
                 led.className = 'status-led offline';
                 text.className = 'status-text offline';
-                text.innerHTML = '● Servidor OFFLINE';
-                console.error('❌ Servidor desconectado:', error);
+                text.textContent = '● Servidor OFFLINE';
             }
         }
-        
-        // Verificar status ao carregar a página
-        checkServerStatus();
-        
-        // Verificar status a cada 30 segundos
-        setInterval(checkServerStatus, 30000);
-        
-        // ============================================
-        // LOGIN
-        // ============================================
+        checkStatus();
+        setInterval(checkStatus, 30000);
+
+        // Olho para ver senha
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            togglePassword.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+
+        // Login
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const username = document.getElementById('username').value;
+            const username = document.getElementById('username').value.toLowerCase().trim();
             const password = document.getElementById('password').value;
             const btn = document.getElementById('loginBtn');
             const messageArea = document.getElementById('messageArea');
@@ -521,20 +184,18 @@
             }
             
             btn.disabled = true;
-            btn.innerHTML = '<span>⏳ Entrando...</span>';
+            btn.textContent = 'Entrando...';
             
             try {
-                const user = await signInWithUsername(username, password);
-                if (user) {
-                    showMessage('Login realizado! Redirecionando...', 'success');
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1000);
-                }
+                await signInWithUsername(username, password);
+                showMessage('Login realizado! Redirecionando...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
             } catch (error) {
                 showMessage(error.message, 'error');
                 btn.disabled = false;
-                btn.innerHTML = '<span>Entrar</span>';
+                btn.textContent = 'Entrar';
             }
         });
         
