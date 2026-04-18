@@ -1,56 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Teste Supabase</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <h1>Teste de Conexão</h1>
-    <div id="status">Testando...</div>
-    <div id="detalhe"></div>
+    <h1>🔌 Teste de Conexão Supabase</h1>
+    <div id="status" style="font-size: 1.2rem; margin: 1rem 0;">🟡 Testando...</div>
+    <div id="detalhes" style="font-family: monospace; background: #f0f0f0; padding: 1rem; border-radius: 0.5rem;"></div>
 
     <script>
         const SUPABASE_URL = 'https://owxqzyrrhmwsmgimasiw.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_BgL7QBUEzeHOlWd5KNo0EQ_t3dF8aMu';
+        
+        console.log('📡 Iniciando teste...');
+        console.log('URL:', SUPABASE_URL);
+        console.log('Key:', SUPABASE_KEY);
+        
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
-        async function testar() {
-            document.getElementById('status').innerHTML = '🟡 Conectando ao Supabase...';
+        async function testarConexao() {
+            const statusDiv = document.getElementById('status');
+            const detalhesDiv = document.getElementById('detalhes');
+            
+            // Teste 1: Verificar se o cliente existe
+            if (!supabase) {
+                statusDiv.innerHTML = '🔴 Cliente Supabase não criado!';
+                detalhesDiv.innerHTML = 'Erro: window.supabase não está disponível. Verifique se o script carregou.';
+                return;
+            }
+            
+            statusDiv.innerHTML = '🟡 Tentando consultar tabela perfis...';
             
             try {
-                // Teste 1: Verificar se o cliente foi criado
-                if (!supabase) {
-                    throw new Error('Cliente Supabase não criado');
-                }
-                
-                // Teste 2: Tentar ler a tabela perfis
+                // Tenta consultar a tabela perfis
                 const { data, error, status } = await supabase
                     .from('perfis')
                     .select('count', { count: 'exact', head: true });
                 
                 if (error) {
-                    document.getElementById('status').innerHTML = '🔴 ERRO';
-                    document.getElementById('detalhe').innerHTML = `
-                        <b>Erro:</b> ${error.message}<br>
+                    statusDiv.innerHTML = '🔴 ERRO NA CONEXÃO!';
+                    detalhesDiv.innerHTML = `
+                        <b>Mensagem:</b> ${error.message}<br>
                         <b>Código:</b> ${error.code}<br>
-                        <b>Status:</b> ${status}<br>
+                        <b>Status HTTP:</b> ${status}<br>
                         <br>
-                        <b>Solução:</b><br>
-                        - Verifique se https://smolcklinux.github.io está no Site URL do Supabase<br>
-                        - Verifique se a chave anônima está correta
+                        <b>🔧 SOLUÇÕES:</b><br>
+                        ${error.message.includes('JWT') ? '- A chave anônima pode estar incorreta' : ''}
+                        ${error.message.includes('Permission') ? '- Verifique se a tabela perfis existe' : ''}
+                        ${error.message.includes('fetch') ? '- CORS: Verifique as URLs no Supabase' : ''}
                     `;
                 } else {
-                    document.getElementById('status').innerHTML = '🟢 CONECTADO!';
-                    document.getElementById('detalhe').innerHTML = `Status: ${status} - Conexão funcionando!`;
+                    statusDiv.innerHTML = '🟢 CONEXÃO ESTABELECIDA COM SUCESSO!';
+                    detalhesDiv.innerHTML = `
+                        ✅ Tudo funcionando!<br>
+                        Status: ${status}<br>
+                        Sua rede social está pronta para uso!
+                    `;
                 }
-                
             } catch (err) {
-                document.getElementById('status').innerHTML = '🔴 ERRO FATAL';
-                document.getElementById('detalhe').innerHTML = `Erro: ${err.message}`;
+                statusDiv.innerHTML = '🔴 ERRO FATAL!';
+                detalhesDiv.innerHTML = `Erro: ${err.message}`;
             }
         }
         
-        testar();
+        testarConexao();
     </script>
 </body>
 </html>
