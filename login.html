@@ -138,7 +138,7 @@
 
         .logo {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
         }
 
         .logo h2 {
@@ -148,6 +148,101 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+
+        /* ============================================ */
+        /* INDICADOR DE STATUS DO SERVIDOR - NEON */
+        /* ============================================ */
+        .server-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem;
+            border-radius: 2rem;
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .status-led {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .status-led.online {
+            background: #00ff88;
+            box-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88;
+            animation: pulse-green 1.5s infinite;
+        }
+
+        .status-led.offline {
+            background: #ff4444;
+            box-shadow: 0 0 10px #ff4444, 0 0 20px #ff4444;
+            animation: pulse-red 1.5s infinite;
+        }
+
+        .status-led.checking {
+            background: #ffaa00;
+            box-shadow: 0 0 10px #ffaa00;
+            animation: pulse-yellow 1s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(0, 255, 136, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 136, 0);
+            }
+        }
+
+        @keyframes pulse-red {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
+            }
+        }
+
+        @keyframes pulse-yellow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 170, 0, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 170, 0, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 170, 0, 0);
+            }
+        }
+
+        .status-text {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-text.online {
+            color: #00ff88;
+            text-shadow: 0 0 5px #00ff88;
+        }
+
+        .status-text.offline {
+            color: #ff4444;
+            text-shadow: 0 0 5px #ff4444;
+        }
+
+        .status-text.checking {
+            color: #ffaa00;
+        }
+        /* ============================================ */
 
         .form-side h3 {
             font-size: 1.8rem;
@@ -325,6 +420,13 @@
                 <div class="logo">
                     <h2>✨ Dorgs ✨</h2>
                 </div>
+
+                <!-- INDICADOR DE STATUS DO SERVIDOR -->
+                <div class="server-status" id="serverStatus">
+                    <div class="status-led checking" id="statusLed"></div>
+                    <span class="status-text checking" id="statusText">Verificando conexão...</span>
+                </div>
+
                 <h3>Bem-vindo de volta!</h3>
                 <p class="subtitle">Faça login para continuar</p>
 
@@ -363,6 +465,46 @@
         import { supabase } from './supabase-config.js';
         import { signInWithUsername } from './auth.js';
         
+        // ============================================
+        // INDICADOR DE STATUS DO SERVIDOR
+        // ============================================
+        async function checkServerStatus() {
+            const led = document.getElementById('statusLed');
+            const text = document.getElementById('statusText');
+            
+            try {
+                // Tenta fazer uma consulta simples ao Supabase
+                const { error } = await supabase
+                    .from('perfis')
+                    .select('count', { count: 'exact', head: true });
+                
+                if (!error) {
+                    // CONECTADO - Neon Verde
+                    led.className = 'status-led online';
+                    text.className = 'status-text online';
+                    text.innerHTML = '● Servidor ONLINE';
+                    console.log('✅ Servidor Supabase conectado!');
+                } else {
+                    throw new Error('Erro na consulta');
+                }
+            } catch (error) {
+                // DESCONECTADO - Neon Vermelho
+                led.className = 'status-led offline';
+                text.className = 'status-text offline';
+                text.innerHTML = '● Servidor OFFLINE';
+                console.error('❌ Servidor desconectado:', error);
+            }
+        }
+        
+        // Verificar status ao carregar a página
+        checkServerStatus();
+        
+        // Verificar status a cada 30 segundos
+        setInterval(checkServerStatus, 30000);
+        
+        // ============================================
+        // LOGIN
+        // ============================================
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
