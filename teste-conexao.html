@@ -5,34 +5,52 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <h1>Teste de Conexão com Supabase</h1>
-    <pre id="resultado">Testando...</pre>
+    <h1>Teste de Conexão</h1>
+    <div id="status">Testando...</div>
+    <div id="detalhe"></div>
 
     <script>
         const SUPABASE_URL = 'https://owxqzyrrhmwsmgimasiw.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_BgL7QBUEzeHOlWd5KNo0EQ_t3dF8aMu';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        const resultado = document.getElementById('resultado');
-
+        
         async function testar() {
-            resultado.textContent = 'Tentando conectar...';
+            document.getElementById('status').innerHTML = '🟡 Conectando ao Supabase...';
+            
             try {
-                // Tenta uma consulta simples à tabela perfis
+                // Teste 1: Verificar se o cliente foi criado
+                if (!supabase) {
+                    throw new Error('Cliente Supabase não criado');
+                }
+                
+                // Teste 2: Tentar ler a tabela perfis
                 const { data, error, status } = await supabase
                     .from('perfis')
                     .select('count', { count: 'exact', head: true });
                 
                 if (error) {
-                    resultado.textContent = `ERRO NA CONSULTA: ${error.message}\nStatus: ${status}`;
+                    document.getElementById('status').innerHTML = '🔴 ERRO';
+                    document.getElementById('detalhe').innerHTML = `
+                        <b>Erro:</b> ${error.message}<br>
+                        <b>Código:</b> ${error.code}<br>
+                        <b>Status:</b> ${status}<br>
+                        <br>
+                        <b>Solução:</b><br>
+                        - Verifique se https://smolcklinux.github.io está no Site URL do Supabase<br>
+                        - Verifique se a chave anônima está correta
+                    `;
                 } else {
-                    resultado.textContent = `✅ CONEXÃO OK! Status: ${status}`;
+                    document.getElementById('status').innerHTML = '🟢 CONECTADO!';
+                    document.getElementById('detalhe').innerHTML = `Status: ${status} - Conexão funcionando!`;
                 }
+                
             } catch (err) {
-                resultado.textContent = `ERRO GERAL: ${err.message}`;
+                document.getElementById('status').innerHTML = '🔴 ERRO FATAL';
+                document.getElementById('detalhe').innerHTML = `Erro: ${err.message}`;
             }
         }
+        
         testar();
     </script>
 </body>
 </html>
-  
