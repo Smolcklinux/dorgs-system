@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste Supabase</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>Teste de Conexão com Supabase</h1>
+    <pre id="resultado">Testando...</pre>
+
+    <script>
+        const SUPABASE_URL = 'https://owxqzyrrhmwsmgimasiw.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_BgL7QBUEzeHOlWd5KNo0EQ_t3dF8aMu';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const resultado = document.getElementById('resultado');
+
+        async function testar() {
+            resultado.textContent = 'Tentando conectar...';
+            try {
+                // Tenta uma consulta simples à tabela perfis
+                const { data, error, status } = await supabase
+                    .from('perfis')
+                    .select('count', { count: 'exact', head: true });
+                
+                if (error) {
+                    resultado.textContent = `ERRO NA CONSULTA: ${error.message}\nStatus: ${status}`;
+                } else {
+                    resultado.textContent = `✅ CONEXÃO OK! Status: ${status}`;
+                }
+            } catch (err) {
+                resultado.textContent = `ERRO GERAL: ${err.message}`;
+            }
+        }
+        testar();
+    </script>
+</body>
+</html>
+  
