@@ -3,64 +3,404 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro - Dorgs</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Criar Conta - Dorgs</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        .auth-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1rem; }
-        .auth-card { background: white; border-radius: 20px; padding: 2.5rem; width: 100%; max-width: 450px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-        .auth-header { text-align: center; margin-bottom: 2rem; }
-        .auth-header h1 { font-size: 2.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .form-group { margin-bottom: 1.5rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; }
-        .form-group input { width: 100%; padding: 0.75rem 1rem; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem; }
-        .form-group input:focus { outline: none; border-color: #667eea; }
-        .auth-btn { width: 100%; padding: 0.875rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; }
-        .auth-footer { text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e0e0e0; }
-        .auth-footer a { color: #667eea; text-decoration: none; }
-        .password-strength { height: 4px; background: #e0e0e0; border-radius: 2px; margin-top: 0.5rem; }
-        .strength-bar { height: 100%; border-radius: 2px; width: 0%; }
-        .password-hint { font-size: 0.8rem; color: #999; margin-top: 0.25rem; }
-        .termos { font-size: 0.85rem; color: #666; text-align: center; margin-top: 1rem; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .register-wrapper {
+            display: flex;
+            max-width: 1100px;
+            width: 100%;
+            background: white;
+            border-radius: 2rem;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .banner {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner::before {
+            content: '🎉';
+            position: absolute;
+            font-size: 20rem;
+            opacity: 0.1;
+            bottom: -50px;
+            right: -50px;
+        }
+
+        .banner h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .banner p {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .form-side {
+            flex: 1;
+            padding: 2.5rem;
+            background: white;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo h2 {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-side h3 {
+            font-size: 1.5rem;
+            color: #1a1a2e;
+            margin-bottom: 0.25rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper .icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid #e8e8e8;
+            border-radius: 0.75rem;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .password-strength {
+            height: 4px;
+            background: #e8e8e8;
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background 0.3s;
+        }
+
+        .hint {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 0.25rem;
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid #e8e8e8;
+            font-size: 0.85rem;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .error-message, .success-message {
+            padding: 0.6rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+        }
+
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        @media (max-width: 768px) {
+            .register-wrapper {
+                flex-direction: column;
+            }
+            .banner {
+                padding: 1.5rem;
+                text-align: center;
+            }
+            .banner h1 {
+                font-size: 1.8rem;
+            }
+            .form-side {
+                padding: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <div class="auth-header">
-                <h1>🐶 Dorgs</h1>
-                <p>Crie sua conta gratuitamente</p>
+    <div class="container">
+        <div class="register-wrapper">
+            <div class="banner">
+                <h1>🐶 Junte-se a nós!</h1>
+                <p>Crie sua conta e comece a compartilhar momentos incríveis com amigos</p>
             </div>
-            
-            <form id="registerForm">
-                <div class="form-group">
-                    <label>📧 E-mail</label>
-                    <input type="email" id="email" required placeholder="seu@email.com">
+
+            <div class="form-side">
+                <div class="logo">
+                    <h2>✨ Criar Conta ✨</h2>
                 </div>
-                <div class="form-group">
-                    <label>👤 Nome de usuário</label>
-                    <input type="text" id="username" required placeholder="@usuario" maxlength="30">
+                <h3>Bem-vindo!</h3>
+                <p class="subtitle">Preencha os dados abaixo</p>
+
+                <div id="messageArea"></div>
+
+                <form id="registerForm">
+                    <div class="input-group">
+                        <label>👤 Nome de usuário</label>
+                        <div class="input-wrapper">
+                            <span class="icon">@</span>
+                            <input type="text" id="username" placeholder="seu_usuario" required>
+                        </div>
+                        <div class="hint">Como você será chamado na plataforma</div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>📧 E-mail</label>
+                        <div class="input-wrapper">
+                            <span class="icon">✉️</span>
+                            <input type="email" id="email" placeholder="seu@email.com" required>
+                        </div>
+                        <div class="hint">Usado apenas para recuperar sua conta</div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>🔒 Senha</label>
+                        <div class="input-wrapper">
+                            <span class="icon">🔐</span>
+                            <input type="password" id="password" placeholder="••••••••" required>
+                        </div>
+                        <div class="password-strength"><div class="strength-bar" id="strengthBar"></div></div>
+                        <div class="hint" id="strengthText">Mínimo 6 caracteres</div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>✓ Confirmar senha</label>
+                        <div class="input-wrapper">
+                            <span class="icon">✓</span>
+                            <input type="password" id="confirmPassword" placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="register-btn" id="registerBtn">
+                        <span>Criar conta gratuita</span>
+                    </button>
+                </form>
+
+                <div class="login-link">
+                    <p>Já tem uma conta? <a href="login.html">Fazer login →</a></p>
                 </div>
-                <div class="form-group">
-                    <label>🔒 Senha</label>
-                    <input type="password" id="password" required placeholder="••••••••">
-                    <div class="password-strength"><div class="strength-bar" id="strengthBar"></div></div>
-                    <div class="password-hint" id="strengthText">Mínimo 6 caracteres</div>
-                </div>
-                <div class="form-group">
-                    <label>✓ Confirmar senha</label>
-                    <input type="password" id="confirmPassword" required placeholder="••••••••">
-                </div>
-                <button type="submit" class="auth-btn" id="registerBtn">Criar conta 🎉</button>
-            </form>
-            
-            <div class="auth-footer">
-                <p>Já tem uma conta? <a href="login.html">Fazer login</a></p>
-                <div class="termos">Ao criar uma conta, você concorda com os <a href="#">Termos de uso</a></div>
             </div>
         </div>
     </div>
-    
-    <script type="module" src="main.js"></script>
+
+    <script type="module">
+        import { signUpWithUsername } from './auth.js';
+        
+        // Força da senha
+        const passwordInput = document.getElementById('password');
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthText = document.getElementById('strengthText');
+        
+        passwordInput.addEventListener('input', () => {
+            const pwd = passwordInput.value;
+            let strength = 0;
+            if (pwd.length >= 6) strength++;
+            if (pwd.length >= 8) strength++;
+            if (/[A-Z]/.test(pwd)) strength++;
+            if (/[0-9]/.test(pwd)) strength++;
+            if (/[^A-Za-z0-9]/.test(pwd)) strength++;
+            
+            const width = (strength / 5) * 100;
+            strengthBar.style.width = width + '%';
+            
+            if (strength <= 2) {
+                strengthBar.style.background = '#ff4757';
+                strengthText.textContent = 'Senha fraca';
+            } else if (strength <= 4) {
+                strengthBar.style.background = '#ffa502';
+                strengthText.textContent = 'Senha média';
+            } else {
+                strengthBar.style.background = '#2ed573';
+                strengthText.textContent = 'Senha forte!';
+            }
+        });
+        
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            const btn = document.getElementById('registerBtn');
+            const messageArea = document.getElementById('messageArea');
+            
+            messageArea.innerHTML = '';
+            
+            if (username.length < 3) {
+                showMessage('Usuário deve ter pelo menos 3 caracteres', 'error');
+                return;
+            }
+            
+            if (password !== confirm) {
+                showMessage('As senhas não coincidem', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('A senha deve ter pelo menos 6 caracteres', 'error');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span>⏳ Criando conta...</span>';
+            
+            try {
+                await signUpWithUsername(username, email, password);
+                showMessage('✅ Conta criada com sucesso! Redirecionando...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            } catch (error) {
+                showMessage(error.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<span>Criar conta gratuita</span>';
+            }
+        });
+        
+        function showMessage(msg, type) {
+            const div = document.createElement('div');
+            div.className = type === 'error' ? 'error-message' : 'success-message';
+            div.textContent = msg;
+            document.getElementById('messageArea').innerHTML = '';
+            document.getElementById('messageArea').appendChild(div);
+        }
+    </script>
 </body>
 </html>

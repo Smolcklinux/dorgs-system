@@ -4,49 +4,405 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Dorgs</title>
-    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        .auth-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1rem; }
-        .auth-card { background: white; border-radius: 20px; padding: 2.5rem; width: 100%; max-width: 450px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-        .auth-header { text-align: center; margin-bottom: 2rem; }
-        .auth-header h1 { font-size: 2.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .form-group { margin-bottom: 1.5rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; }
-        .form-group input { width: 100%; padding: 0.75rem 1rem; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem; }
-        .form-group input:focus { outline: none; border-color: #667eea; }
-        .auth-btn { width: 100%; padding: 0.875rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; }
-        .auth-btn:hover { transform: translateY(-2px); transition: transform 0.2s; }
-        .auth-footer { text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e0e0e0; }
-        .auth-footer a { color: #667eea; text-decoration: none; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Elementos decorativos */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            bottom: -200px;
+            left: -200px;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-wrapper {
+            display: flex;
+            max-width: 1100px;
+            width: 100%;
+            background: white;
+            border-radius: 2rem;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Lado esquerdo - Banner */
+        .banner {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner::before {
+            content: '🐶';
+            position: absolute;
+            font-size: 20rem;
+            opacity: 0.1;
+            bottom: -50px;
+            right: -50px;
+        }
+
+        .banner h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+            position: relative;
+        }
+
+        .banner p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .features {
+            position: relative;
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .feature-item span:first-child {
+            font-size: 1.2rem;
+        }
+
+        /* Lado direito - Formulário */
+        .form-side {
+            flex: 1;
+            padding: 3rem;
+            background: white;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo h2 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-side h3 {
+            font-size: 1.8rem;
+            color: #1a1a2e;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .form-side .subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper .icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1rem;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 2.8rem;
+            border: 2px solid #e8e8e8;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            transform: none;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e8e8e8;
+        }
+
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .register-link a:hover {
+            color: #764ba2;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            text-align: center;
+            animation: shake 0.3s ease-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .login-wrapper {
+                flex-direction: column;
+                border-radius: 1.5rem;
+            }
+            
+            .banner {
+                padding: 2rem;
+                text-align: center;
+            }
+            
+            .banner h1 {
+                font-size: 2rem;
+            }
+            
+            .features {
+                display: none;
+            }
+            
+            .form-side {
+                padding: 2rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <div class="auth-header">
+    <div class="container">
+        <div class="login-wrapper">
+            <!-- Lado esquerdo - Banner -->
+            <div class="banner">
                 <h1>🐶 Dorgs</h1>
-                <p>Faça login para continuar</p>
+                <p>Conecte-se com amigos, compartilhe momentos e faça parte da nossa comunidade</p>
+                <div class="features">
+                    <div class="feature-item">
+                        <span>🚀</span>
+                        <span>Compartilhe suas ideias</span>
+                    </div>
+                    <div class="feature-item">
+                        <span>❤️</span>
+                        <span>Curta posts interessantes</span>
+                    </div>
+                    <div class="feature-item">
+                        <span>💬</span>
+                        <span>Conecte-se com pessoas</span>
+                    </div>
+                </div>
             </div>
-            
-            <form id="loginForm">
-                <div class="form-group">
-                    <label>📧 E-mail</label>
-                    <input type="email" id="email" required placeholder="seu@email.com">
+
+            <!-- Lado direito - Formulário -->
+            <div class="form-side">
+                <div class="logo">
+                    <h2>✨ Dorgs ✨</h2>
                 </div>
-                <div class="form-group">
-                    <label>🔒 Senha</label>
-                    <input type="password" id="password" required placeholder="••••••••">
+                <h3>Bem-vindo de volta!</h3>
+                <p class="subtitle">Faça login para continuar</p>
+
+                <div id="messageArea"></div>
+
+                <form id="loginForm">
+                    <div class="input-group">
+                        <label>👤 Nome de usuário</label>
+                        <div class="input-wrapper">
+                            <span class="icon">@</span>
+                            <input type="text" id="username" placeholder="seu_usuario" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>🔒 Senha</label>
+                        <div class="input-wrapper">
+                            <span class="icon">🔐</span>
+                            <input type="password" id="password" placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="login-btn" id="loginBtn">
+                        <span>Entrar</span>
+                    </button>
+                </form>
+
+                <div class="register-link">
+                    <p>Não tem uma conta? <a href="cadastro.html">Criar conta gratuita →</a></p>
                 </div>
-                <button type="submit" class="auth-btn" id="loginBtn">Entrar 🚀</button>
-            </form>
-            
-            <div class="auth-footer">
-                <p>Não tem uma conta? <a href="cadastro.html">Criar conta gratuita</a></p>
             </div>
         </div>
     </div>
-    
-    <script type="module" src="main.js"></script>
+
+    <script type="module">
+        import { supabase } from './supabase-config.js';
+        import { signInWithUsername } from './auth.js';
+        
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('loginBtn');
+            const messageArea = document.getElementById('messageArea');
+            
+            messageArea.innerHTML = '';
+            
+            if (!username || !password) {
+                showMessage('Preencha todos os campos', 'error');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span>⏳ Entrando...</span>';
+            
+            try {
+                const user = await signInWithUsername(username, password);
+                if (user) {
+                    showMessage('Login realizado! Redirecionando...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                }
+            } catch (error) {
+                showMessage(error.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<span>Entrar</span>';
+            }
+        });
+        
+        function showMessage(msg, type) {
+            const div = document.createElement('div');
+            div.className = type === 'error' ? 'error-message' : 'success-message';
+            div.textContent = msg;
+            document.getElementById('messageArea').innerHTML = '';
+            document.getElementById('messageArea').appendChild(div);
+        }
+    </script>
 </body>
 </html>
