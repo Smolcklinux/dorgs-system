@@ -22,6 +22,7 @@
             padding: 2rem;
             width: 100%;
             max-width: 350px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         h1 { text-align: center; margin-bottom: 1.5rem; color: #333; }
         input {
@@ -35,15 +36,17 @@
         button {
             width: 100%;
             padding: 0.8rem;
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 0.5rem;
             font-size: 1rem;
             cursor: pointer;
+            font-weight: bold;
         }
-        .error { color: red; margin-bottom: 1rem; text-align: center; }
-        .success { color: green; margin-bottom: 1rem; text-align: center; }
+        button:hover { opacity: 0.9; transform: scale(1.02); }
+        .error { color: red; margin-bottom: 1rem; text-align: center; padding: 0.5rem; background: #fee; border-radius: 0.5rem; }
+        .success { color: green; margin-bottom: 1rem; text-align: center; padding: 0.5rem; background: #e8f5e9; border-radius: 0.5rem; }
         a { color: #667eea; text-decoration: none; }
         .link { text-align: center; margin-top: 1rem; }
     </style>
@@ -59,70 +62,110 @@
     </div>
 
     <script>
+        // Configuração do Supabase
         const SUPABASE_URL = 'https://owxqzyrrhmwsmgimasiw.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_BgL7QBUEzeHOlWd5KNo0EQ_t3dF8aMu';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        document.getElementById('btnCadastrar').onclick = async () => {
-            const username = document.getElementById('username').value.trim().toLowerCase();
-            const password = document.getElementById('password').value;
-            const msg = document.getElementById('message');
-
-            if (username.length < 3) {
-                msg.innerHTML = '<div class="error">Usuário precisa ter 3+ caracteres</div>';
-                return;
-            }
-            if (password.length < 6) {
-                msg.innerHTML = '<div class="error">Senha precisa ter 6+ caracteres</div>';
-                return;
-            }
-
+        // Aguardar o DOM carregar completamente
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página carregada');
+            
             const btn = document.getElementById('btnCadastrar');
-            btn.disabled = true;
-            btn.textContent = 'Criando...';
-
-            try {
-                // 1. Verificar se usuário já existe
-                const { data: existe } = await supabase
-                    .from('perfis')
-                    .select('username')
-                    .eq('username', username)
-                    .maybeSingle();
-
-                if (existe) throw new Error('Usuário já existe');
-
-                // 2. Criar usuário no auth
-                const email = `${username}@dorgs.local`;
-                const { data, error } = await supabase.auth.signUp({
-                    email: email,
-                    password: password,
-                    options: { data: { username: username } }
-                });
-
-                if (error) throw new Error(error.message);
-
-                // 3. Criar perfil
-                const { error: perfilError } = await supabase
-                    .from('perfis')
-                    .insert({
-                        id: data.user.id,
-                        username: username,
-                        nome_publico: username
-                    });
-
-                if (perfilError) throw new Error('Erro ao criar perfil');
-
-                msg.innerHTML = '<div class="success">Conta criada! Redirecionando...</div>';
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 1500);
-
-            } catch (err) {
-                msg.innerHTML = `<div class="error">${err.message}</div>`;
-                btn.disabled = false;
-                btn.textContent = 'Criar conta';
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const messageDiv = document.getElementById('message');
+            
+            // Verificar se o botão existe
+            if (!btn) {
+                console.error('Botão não encontrado!');
+                return;
             }
-        };
+            
+            // Adicionar evento de clique
+            btn.onclick = async function() {
+                console.log('Botão clicado!');
+                
+                const username = usernameInput.value.trim().toLowerCase();
+                const password = passwordInput.value;
+                
+                messageDiv.innerHTML = '';
+                
+                if (username.length < 3) {
+                    messageDiv.innerHTML = '<div class="error">Usuário precisa ter pelo menos 3 caracteres</div>';
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    messageDiv.innerHTML = '<div class="error">Senha precisa ter pelo menos 6 caracteres</div>';
+                    return;
+                }
+                
+                btn.disabled = true;
+                btn.textContent = 'Criando conta...';
+                
+                try {
+                    // Verificar se usuário já existe
+                    const { data: existe, error: checkError } = await supabase
+                        .from('perfis')
+                        .select('username')
+                        .eq('username', username)
+                        .maybeSingle();
+                    
+                    if (existe) {
+                        throw new Error('Nome de usuário já está em uso');
+                    }
+                    
+                    // Criar email interno
+                    const email = `${username}@dorgs.local`;
+                    console.log('Criando usuário com email:', email);
+                    
+                    // Criar usuário no auth
+                    const { data, error } = await supabase.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: {
+                            data: { username: username }
+                        }
+                    });
+                    
+                    if (error) throw new Error(error.message);
+                    
+                    if (!data.user) {
+                        throw new Error('Erro ao criar usuário');
+                    }
+                    
+                    console.log('Usuário criado, ID:', data.user.id);
+                    
+                    // Criar perfil
+                    const { error: perfilError } = await supabase
+                        .from('perfis')
+                        .insert({
+                            id: data.user.id,
+                            username: username,
+                            nome_publico: username,
+                            bio: 'Novo por aqui! 🚀'
+                        });
+                    
+                    if (perfilError) {
+                        console.error('Erro ao criar perfil:', perfilError);
+                        throw new Error('Erro ao criar perfil');
+                    }
+                    
+                    messageDiv.innerHTML = '<div class="success">✅ Conta criada com sucesso! Redirecionando...</div>';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1500);
+                    
+                } catch (err) {
+                    console.error('Erro:', err);
+                    messageDiv.innerHTML = `<div class="error">❌ ${err.message}</div>`;
+                    btn.disabled = false;
+                    btn.textContent = 'Criar conta';
+                }
+            };
+        });
     </script>
 </body>
 </html>

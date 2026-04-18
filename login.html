@@ -22,6 +22,7 @@
             padding: 2rem;
             width: 100%;
             max-width: 350px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         h1 { text-align: center; margin-bottom: 1.5rem; color: #333; }
         input {
@@ -35,15 +36,17 @@
         button {
             width: 100%;
             padding: 0.8rem;
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 0.5rem;
             font-size: 1rem;
             cursor: pointer;
+            font-weight: bold;
         }
-        .error { color: red; margin-bottom: 1rem; text-align: center; }
-        .success { color: green; margin-bottom: 1rem; text-align: center; }
+        button:hover { opacity: 0.9; transform: scale(1.02); }
+        .error { color: red; margin-bottom: 1rem; text-align: center; padding: 0.5rem; background: #fee; border-radius: 0.5rem; }
+        .success { color: green; margin-bottom: 1rem; text-align: center; padding: 0.5rem; background: #e8f5e9; border-radius: 0.5rem; }
         a { color: #667eea; text-decoration: none; }
         .link { text-align: center; margin-top: 1rem; }
         .status { text-align: center; margin-bottom: 1rem; font-size: 0.8rem; }
@@ -54,7 +57,7 @@
 <body>
     <div class="card">
         <h1>🐶 Dorgs</h1>
-        <div class="status" id="status">🟢 Conectando...</div>
+        <div class="status" id="status">🟢 Verificando...</div>
         <div id="message"></div>
         <input type="text" id="username" placeholder="Nome de usuário">
         <input type="password" id="password" placeholder="Senha">
@@ -63,75 +66,104 @@
     </div>
 
     <script>
+        // Configuração do Supabase
         const SUPABASE_URL = 'https://owxqzyrrhmwsmgimasiw.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_BgL7QBUEzeHOlWd5KNo0EQ_t3dF8aMu';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Verificar status
-        async function checkStatus() {
+        // Aguardar o DOM carregar completamente
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página de login carregada');
+            
+            const btn = document.getElementById('btnLogin');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const messageDiv = document.getElementById('message');
             const statusDiv = document.getElementById('status');
-            try {
-                const { error } = await supabase.from('perfis').select('count', { count: 'exact', head: true });
-                if (!error) {
-                    statusDiv.innerHTML = '🟢 Servidor ONLINE';
-                    statusDiv.className = 'status online';
-                } else {
+            
+            // Verificar status do servidor
+            async function verificarStatus() {
+                try {
+                    const { error } = await supabase.from('perfis').select('count', { count: 'exact', head: true });
+                    if (!error) {
+                        statusDiv.innerHTML = '🟢 Servidor ONLINE';
+                        statusDiv.className = 'status online';
+                    } else {
+                        statusDiv.innerHTML = '🔴 Servidor OFFLINE';
+                        statusDiv.className = 'status offline';
+                    }
+                } catch {
                     statusDiv.innerHTML = '🔴 Servidor OFFLINE';
                     statusDiv.className = 'status offline';
                 }
-            } catch {
-                statusDiv.innerHTML = '🔴 Servidor OFFLINE';
-                statusDiv.className = 'status offline';
             }
-        }
-        checkStatus();
-
-        document.getElementById('btnLogin').onclick = async () => {
-            const username = document.getElementById('username').value.trim().toLowerCase();
-            const password = document.getElementById('password').value;
-            const msg = document.getElementById('message');
-            const btn = document.getElementById('btnLogin');
-
-            if (!username || !password) {
-                msg.innerHTML = '<div class="error">Preencha todos os campos</div>';
+            verificarStatus();
+            
+            // Verificar se o botão existe
+            if (!btn) {
+                console.error('Botão não encontrado!');
                 return;
             }
-
-            btn.disabled = true;
-            btn.textContent = 'Entrando...';
-
-            try {
-                // Buscar o email do usuário
-                const { data: perfil, error: perfilError } = await supabase
-                    .from('perfis')
-                    .select('id')
-                    .eq('username', username)
-                    .maybeSingle();
-
-                if (perfilError || !perfil) {
-                    throw new Error('Usuário não encontrado');
+            
+            // Adicionar evento de clique
+            btn.onclick = async function() {
+                console.log('Botão de login clicado!');
+                
+                const username = usernameInput.value.trim().toLowerCase();
+                const password = passwordInput.value;
+                
+                messageDiv.innerHTML = '';
+                
+                if (!username || !password) {
+                    messageDiv.innerHTML = '<div class="error">Preencha todos os campos</div>';
+                    return;
                 }
-
-                // Tentar login com email interno
-                const email = `${username}@dorgs.local`;
-                const { error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-
-                if (error) throw new Error('Senha incorreta');
-
-                msg.innerHTML = '<div class="success">Login realizado! Redirecionando...</div>';
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1000);
-
-            } catch (err) {
-                msg.innerHTML = `<div class="error">${err.message}</div>`;
-                btn.disabled = false;
-                btn.textContent = 'Entrar';
-            }
-        };
+                
+                btn.disabled = true;
+                btn.textContent = 'Entrando...';
+                
+                try {
+                    // Buscar o perfil pelo username
+                    const { data: perfil, error: perfilError } = await supabase
+                        .from('perfis')
+                        .select('id')
+                        .eq('username', username)
+                        .maybeSingle();
+                    
+                    if (perfilError || !perfil) {
+                        throw new Error('Usuário não encontrado');
+                    }
+                    
+                    console.log('Perfil encontrado, ID:', perfil.id);
+                    
+                    // Tentar login com email interno
+                    const email = `${username}@dorgs.local`;
+                    console.log('Tentando login com email:', email);
+                    
+                    const { error } = await supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+                    
+                    if (error) {
+                        console.error('Erro no login:', error);
+                        throw new Error('Senha incorreta');
+                    }
+                    
+                    messageDiv.innerHTML = '<div class="success">✅ Login realizado! Redirecionando...</div>';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                    
+                } catch (err) {
+                    console.error('Erro:', err);
+                    messageDiv.innerHTML = `<div class="error">❌ ${err.message}</div>`;
+                    btn.disabled = false;
+                    btn.textContent = 'Entrar';
+                }
+            };
+        });
     </script>
 </body>
 </html>
