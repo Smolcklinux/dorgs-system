@@ -1,12 +1,12 @@
 // ============================================
-// AUTH.JS - Autenticação com usuário/senha (CORRIGIDO)
+// AUTH.JS - Autenticação com usuário/senha (FINALMENTE CORRETO!)
 // ============================================
 
 import { supabase } from './supabase-config.js';
 
 let currentUser = null;
 
-// Login com nome de usuário (VERSÃO CORRIGIDA)
+// Login com nome de usuário
 export async function signInWithUsername(username, password) {
   try {
     console.log('🔍 Buscando usuário:', username);
@@ -16,7 +16,7 @@ export async function signInWithUsername(username, password) {
       .from('perfis')
       .select('id')
       .eq('username', username)
-      .single();
+      .maybeSingle();
     
     if (perfilError || !perfil) {
       console.log('❌ Usuário não encontrado no perfil');
@@ -25,13 +25,12 @@ export async function signInWithUsername(username, password) {
     
     console.log('✅ Perfil encontrado, ID:', perfil.id);
     
-    // AGORA CORRETO: Buscar o email do usuário pela tabela auth.users
-    // Usando RPC (função SQL) ou query direta
+    // CORRIGIDO: usar 'users' em vez de 'auth.users'
     const { data: userData, error: userError } = await supabase
-      .from('auth.users')
+      .from('users')
       .select('email')
       .eq('id', perfil.id)
-      .single();
+      .maybeSingle();
     
     if (userError || !userData) {
       console.log('⚠️ Erro ao buscar email, usando fallback');
@@ -74,7 +73,7 @@ export async function signInWithUsername(username, password) {
   }
 }
 
-// Cadastro com username (CORRIGIDO)
+// Cadastro com username
 export async function signUpWithUsername(username, email, password) {
   try {
     console.log('📝 Criando usuário:', username);
