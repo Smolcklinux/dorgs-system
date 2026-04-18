@@ -8,7 +8,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: Arial, sans-serif;
             min-height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
@@ -16,196 +16,122 @@
             justify-content: center;
             padding: 1rem;
         }
-        .login-card {
+        .card {
             background: white;
-            border-radius: 2rem;
-            padding: 2.5rem;
+            border-radius: 1rem;
+            padding: 2rem;
             width: 100%;
-            max-width: 420px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            animation: fadeIn 0.5s ease-out;
+            max-width: 350px;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .logo { text-align: center; margin-bottom: 2rem; }
-        .logo h1 {
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .logo p { color: #666; font-size: 0.85rem; margin-top: 0.25rem; }
-        h2 { text-align: center; margin-bottom: 0.5rem; color: #1a1a2e; }
-        .subtitle { text-align: center; color: #666; margin-bottom: 2rem; font-size: 0.85rem; }
-        .input-group { margin-bottom: 1.5rem; }
-        .input-group label { display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; font-size: 0.85rem; }
-        .input-wrapper { position: relative; }
-        .input-wrapper input {
+        h1 { text-align: center; margin-bottom: 1.5rem; color: #333; }
+        input {
             width: 100%;
-            padding: 0.9rem 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 0.75rem;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
             font-size: 1rem;
-            transition: all 0.3s;
-            padding-right: 3rem;
         }
-        .input-wrapper input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
-        }
-        .toggle-password {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: #999;
-            background: none;
-            border: none;
-        }
-        .login-btn {
+        button {
             width: 100%;
-            padding: 0.9rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0.8rem;
+            background: #667eea;
             color: white;
             border: none;
-            border-radius: 0.75rem;
+            border-radius: 0.5rem;
             font-size: 1rem;
-            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 0.5rem;
         }
-        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
-        .register-link { text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e0e0e0; }
-        .register-link a { color: #667eea; text-decoration: none; font-weight: 600; }
-        .error-message { background: #fee; color: #c33; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.8rem; text-align: center; }
-        .success-message { background: #e8f5e9; color: #2e7d32; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.8rem; text-align: center; }
-        .server-status { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; }
-        .status-led { width: 10px; height: 10px; border-radius: 50%; }
-        .status-led.online { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
-        .status-led.offline { background: #ff4444; box-shadow: 0 0 10px #ff4444; }
-        .status-text.online { color: #00ff88; font-size: 0.75rem; }
-        .status-text.offline { color: #ff4444; font-size: 0.75rem; }
+        .error { color: red; margin-bottom: 1rem; text-align: center; }
+        .success { color: green; margin-bottom: 1rem; text-align: center; }
+        a { color: #667eea; text-decoration: none; }
+        .link { text-align: center; margin-top: 1rem; }
+        .status { text-align: center; margin-bottom: 1rem; font-size: 0.8rem; }
+        .online { color: #00ff88; }
+        .offline { color: #ff4444; }
     </style>
 </head>
 <body>
-    <div class="login-card">
-        <div class="logo">
-            <h1>🐶 Dorgs</h1>
-            <p>rede social dos devs</p>
-        </div>
-
-        <div class="server-status" id="serverStatus">
-            <div class="status-led" id="statusLed"></div>
-            <span class="status-text" id="statusText">Verificando...</span>
-        </div>
-
-        <h2>Bem-vindo de volta!</h2>
-        <p class="subtitle">Faça login com seu usuário</p>
-
-        <div id="messageArea"></div>
-
-        <form id="loginForm">
-            <div class="input-group">
-                <label>👤 Nome de usuário</label>
-                <div class="input-wrapper">
-                    <input type="text" id="username" placeholder="ex: joaosilva" required autocomplete="off">
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label>🔒 Senha</label>
-                <div class="input-wrapper">
-                    <input type="password" id="password" placeholder="••••••••" required>
-                    <button type="button" class="toggle-password" id="togglePassword">👁️</button>
-                </div>
-            </div>
-
-            <button type="submit" class="login-btn" id="loginBtn">Entrar</button>
-        </form>
-
-        <div class="register-link">
-            <p>Não tem uma conta? <a href="cadastro.html">Criar conta →</a></p>
-        </div>
+    <div class="card">
+        <h1>🐶 Dorgs</h1>
+        <div class="status" id="status">🟢 Conectando...</div>
+        <div id="message"></div>
+        <input type="text" id="username" placeholder="Nome de usuário">
+        <input type="password" id="password" placeholder="Senha">
+        <button id="btnLogin">Entrar</button>
+        <div class="link"><a href="cadastro.html">Criar conta →</a></div>
     </div>
 
-    <script type="module">
-        import { supabase } from './supabase-config.js';
-        import { signInWithUsername } from './auth.js';
+    <script>
+        const SUPABASE_URL = 'https://owxqzyrrhmwsmgimasiw.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_BgL7QBUEzeHOlWd5KNo0EQ_t3dF8aMu';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Status do servidor
+        // Verificar status
         async function checkStatus() {
-            const led = document.getElementById('statusLed');
-            const text = document.getElementById('statusText');
+            const statusDiv = document.getElementById('status');
             try {
                 const { error } = await supabase.from('perfis').select('count', { count: 'exact', head: true });
                 if (!error) {
-                    led.className = 'status-led online';
-                    text.className = 'status-text online';
-                    text.textContent = '● Servidor ONLINE';
-                } else { throw new Error(); }
+                    statusDiv.innerHTML = '🟢 Servidor ONLINE';
+                    statusDiv.className = 'status online';
+                } else {
+                    statusDiv.innerHTML = '🔴 Servidor OFFLINE';
+                    statusDiv.className = 'status offline';
+                }
             } catch {
-                led.className = 'status-led offline';
-                text.className = 'status-text offline';
-                text.textContent = '● Servidor OFFLINE';
+                statusDiv.innerHTML = '🔴 Servidor OFFLINE';
+                statusDiv.className = 'status offline';
             }
         }
         checkStatus();
-        setInterval(checkStatus, 30000);
 
-        // Olho para ver senha
-        const togglePassword = document.getElementById('togglePassword');
-        const passwordInput = document.getElementById('password');
-        togglePassword.addEventListener('click', () => {
-            const type = passwordInput.type === 'password' ? 'text' : 'password';
-            passwordInput.type = type;
-            togglePassword.textContent = type === 'password' ? '👁️' : '🙈';
-        });
-
-        // Login
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value.toLowerCase().trim();
+        document.getElementById('btnLogin').onclick = async () => {
+            const username = document.getElementById('username').value.trim().toLowerCase();
             const password = document.getElementById('password').value;
-            const btn = document.getElementById('loginBtn');
-            const messageArea = document.getElementById('messageArea');
-            
-            messageArea.innerHTML = '';
-            
+            const msg = document.getElementById('message');
+            const btn = document.getElementById('btnLogin');
+
             if (!username || !password) {
-                showMessage('Preencha todos os campos', 'error');
+                msg.innerHTML = '<div class="error">Preencha todos os campos</div>';
                 return;
             }
-            
+
             btn.disabled = true;
             btn.textContent = 'Entrando...';
-            
+
             try {
-                await signInWithUsername(username, password);
-                showMessage('Login realizado! Redirecionando...', 'success');
+                // Buscar o email do usuário
+                const { data: perfil, error: perfilError } = await supabase
+                    .from('perfis')
+                    .select('id')
+                    .eq('username', username)
+                    .maybeSingle();
+
+                if (perfilError || !perfil) {
+                    throw new Error('Usuário não encontrado');
+                }
+
+                // Tentar login com email interno
+                const email = `${username}@dorgs.local`;
+                const { error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) throw new Error('Senha incorreta');
+
+                msg.innerHTML = '<div class="success">Login realizado! Redirecionando...</div>';
                 setTimeout(() => {
                     window.location.href = 'index.html';
                 }, 1000);
-            } catch (error) {
-                showMessage(error.message, 'error');
+
+            } catch (err) {
+                msg.innerHTML = `<div class="error">${err.message}</div>`;
                 btn.disabled = false;
                 btn.textContent = 'Entrar';
             }
-        });
-        
-        function showMessage(msg, type) {
-            const div = document.createElement('div');
-            div.className = type === 'error' ? 'error-message' : 'success-message';
-            div.textContent = msg;
-            document.getElementById('messageArea').innerHTML = '';
-            document.getElementById('messageArea').appendChild(div);
-        }
+        };
     </script>
 </body>
 </html>
